@@ -5,7 +5,7 @@
 *.egg-info
 dist
 build
-__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
@@ -54,4 +54,6 @@ htmlcov/
 Thumbs.db
 
 # Custom
-*/__pycache__/ 
+**/__pycache__/
+
+# ... existing code ... 
