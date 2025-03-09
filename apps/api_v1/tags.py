@@ -20,6 +20,7 @@ class TagView(HTTPMethodView):
     @openapi.summary("创建新标签")
     @openapi.body({"name": str})
     @openapi.response(201, {"id": int, "name": str})
+    @jwt_required
     async def post(self, request):
         try:
             data = request.json
@@ -64,6 +65,7 @@ class TagDetailView(HTTPMethodView):
         })
         
     @openapi.summary("更新标签")
+    @jwt_required
     async def put(self, request, tag_id):
         tag = await Tag.get_or_none(id=tag_id)
         if not tag:
@@ -89,6 +91,7 @@ class TagDetailView(HTTPMethodView):
         })
         
     @openapi.summary("删除标签")
+    @jwt_required
     async def delete(self, request, tag_id):
         tag = await Tag.get_or_none(id=tag_id)
         if not tag:

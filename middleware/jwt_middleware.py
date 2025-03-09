@@ -5,17 +5,26 @@ from middleware.auth import verify_token
 import jwt
 import time
 from models.user import User
-from sanic.response import json
 
-def jwt_required(f):
-    @wraps(f)
-    async def decorated_function(self, request, *args, **kwargs):
-        if not hasattr(request.ctx, 'user') or request.ctx.user is None:
-            return json({
-                "error": "未授权访问，请登录或提供有效的访问令牌", 
-                "code": "token_expired"
-            }, status=401)
-        return await f(self, request, *args, **kwargs)
+def jwt_required(wrapped):
+    """JWT 验证装饰器"""
+    @wraps(wrapped)
+    async def decorated_function(request, *args, **kwargs):
+        # 从请求头中获取令牌
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            raise Unauthorized('缺少有效的授权令牌')
+        
+        token = auth_header.split(' ')[1]
+        user = await verify_token(request, token)
+        
+        if not user:
+            raise Unauthorized('无效的授权令牌')
+        
+        # 将用户信息添加到请求对象
+        request.ctx.user = user
+        return await wrapped(request, *args, **kwargs)
+    
     return decorated_function
 
 def inject_user(middleware_or_route):

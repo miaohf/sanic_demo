@@ -22,6 +22,7 @@ class UserView(HTTPMethodView):
     @openapi.summary("创建新用户")
     @openapi.body({"username": str, "password": str, "email": str})
     @openapi.response(201, {"id": int, "username": str, "email": str})
+    @jwt_required
     async def post(self, request):
         try:
             # 验证请求数据
@@ -65,6 +66,7 @@ class UserDetailView(HTTPMethodView):
         })
         
     @openapi.summary("更新用户")
+    @jwt_required
     async def put(self, request, user_id):
         # 只能更新自己的信息
         if str(request.ctx.user.id) != str(user_id):
@@ -98,6 +100,7 @@ class UserDetailView(HTTPMethodView):
         })
         
     @openapi.summary("删除用户")
+    @jwt_required
     async def delete(self, request, user_id):
         # 只能删除自己的账户
         if str(request.ctx.user.id) != str(user_id):

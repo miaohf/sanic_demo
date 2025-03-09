@@ -30,6 +30,7 @@ class PostView(HTTPMethodView):
         })
         
     @openapi.summary("创建新帖子")
+    @jwt_required
     @openapi.body({
         "title": str,
         "content": str,
@@ -99,6 +100,7 @@ class PostDetailView(HTTPMethodView):
         })
         
     @openapi.summary("更新帖子")
+    @jwt_required
     async def put(self, request, post_id):
         post = await Post.get_or_none(id=post_id)
         if not post:
@@ -144,6 +146,7 @@ class PostDetailView(HTTPMethodView):
         })
         
     @openapi.summary("删除帖子")
+    @jwt_required
     async def delete(self, request, post_id):
         post = await Post.get_or_none(id=post_id)
         if not post:
